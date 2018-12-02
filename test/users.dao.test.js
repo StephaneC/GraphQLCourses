@@ -1,7 +1,7 @@
 const expect = require('chai').expect;
 
 const mongo = require('../src/mongo');
-const users = require('../src/dao/users')
+const users = require('../src/users/users.dao')
 
 describe('Users dao', function () {
 
@@ -14,6 +14,36 @@ describe('Users dao', function () {
             }).catch(function (e) {
                 console.log({ e });
                 expect(0).equal(1);
+            });
+    });
+
+    it(`getById `, function (done, fail) {
+        users.signup("dummyId", "dummy", "url")
+            .then((user) => {
+                console.log("Looking for user " + user.id);
+                users.getById(user.id)
+                .then(function(u){
+                    console.log("Get User by Id " + u);
+                    expect(u.username).to.equal('dummyId');
+                    done();
+                });
+            }).catch(function (e) {
+                console.log({ e });
+                fail();
+            });
+    });
+
+    it(`get users `, function (done, fail) {
+        users.signup("dummyAll", "dummy", "url")
+            .then((user) => {
+                users.getUsers()
+                .then(function(u){
+                    expect(u.length).to.equal(1);
+                    done();
+                });
+            }).catch(function (e) {
+                console.log({ e });
+                fail();
             });
     });
 

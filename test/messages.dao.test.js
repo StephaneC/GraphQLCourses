@@ -3,7 +3,7 @@ const expect = require( 'chai' ).expect;
 const done = require( 'chai' ).done;
 const mongo = require('../src/mongo');
 
-const messages = require('../src/dao/messages')
+const messages = require('../src/messages/messages.dao')
 
 describe( 'Messages dao', function() {
 
@@ -21,6 +21,8 @@ describe( 'Messages dao', function() {
             .then((msgs)=>{
                 expect(msgs.length).equal(1);
                 done();
+            }).catch(function(e){
+                fail();
             });
         }).catch(function(e){
             fail();
