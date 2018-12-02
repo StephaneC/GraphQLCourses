@@ -14,7 +14,8 @@ const getUsers = function () {
                     users.push({
                         username: u.username,
                         urlPhoto: u.urlPhoto,
-                        date: u.date
+                        date: u.date,
+                        id: u._id.toString()
                     })
                 });
                 resolve(users);
@@ -35,7 +36,9 @@ const getById = function (id) {
                             message: 'user not exist'
                         });
                     } else {
-                        resolve(res[0]);
+                        const u = res[0];
+                        u.id = u._id.toString()
+                        resolve(u);
                     }
                 } else {
                     console.log("Error getUser by id:" + err);
@@ -60,6 +63,8 @@ const getUser = function (username) {
                             message: 'user not exist'
                         });
                     } else {
+                        const u = res[0];
+                        u.id = u._id.toString();
                         resolve(res[0]);
                     }
                 } else {
@@ -96,9 +101,8 @@ const signup = function (username, password, photoUrl) {
             mongo.get().then(function (db) {
                 db.collection(COLLECTION).insertOne(u, function (err, result) {
                     if (!err) {
-                        resolve({
-                            id: u._id
-                        });
+                        u.id = u._id.toString();
+                        resolve(u);
                     } else {
                         console.log("Error signup:" + err);
                         reject({

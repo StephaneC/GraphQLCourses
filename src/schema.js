@@ -10,6 +10,15 @@ const usersDao = require('./users/users.dao')
 const messagesDao = require('./messages/messages.dao')
 
 
+const TokenType = new GraphQLObjectType({
+    name: 'TokenType',
+    fields: {
+        token: {
+            type: GraphQLString
+        }
+    }
+});
+
 const UserType = new GraphQLObjectType({
     name: 'UserType',
     fields: {
@@ -75,14 +84,66 @@ const QueryType = new GraphQLObjectType({
             },
             resolve(parent, { id }) {
                 console.log("/user:id resolver");
-                usersDao.getById(id)
+                return usersDao.getById(id)
+            }
+        }
+    }
+});
+
+const MutationType = new GraphQLObjectType({
+    name: 'Mutation',
+    fields: {       
+        signup: {
+            type: UserType,
+            args: {
+                username: {
+                    type: new GraphQLNonNull(GraphQLString)
+                },
+                password: {
+                    type: new GraphQLNonNull(GraphQLString)
+                },
+                urlPhoto: {
+                    type: GraphQLString
+                }
+            },
+            resolve(parent, { username, password, urlPhoto }) {
+                console.log("/signup resolver");
+                return usersDao.signup(username, password, urlPhoto)
+            }
+        },
+        signin: {
+            type: TokenType,
+            args: {
+                username: {
+                    type: new GraphQLNonNull(GraphQLString)
+                },
+                password: {
+                    type: new GraphQLNonNull(GraphQLString)
+                }
+            },
+            resolve(parent, { username, password }) {
+                console.log("/signin resolver");
+                return usersDao.signin(username, password)
+            }
+        },
+        addMessage: {
+            type: UserType,
+            args: {
+                message: {
+                    type: new GraphQLNonNull(GraphQLString)
+                }
+            },
+            resolve(parent, { message }) {
+                console.log("/addmessage resolver");
+                return messagesDao.addMessage(message)
             }
         }
     }
 });
 
 const schema = new GraphQLSchema({
-    query: QueryType
+    query: QueryType,
+    mutation: MutationType
 });
 
 exports.default = schema;
