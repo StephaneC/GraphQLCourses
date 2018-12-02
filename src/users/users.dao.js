@@ -1,69 +1,75 @@
 const CryptoJS = require('crypto-js');
 const crypto = require('crypto')
-var mongo = require('mongodb');
+var mongo = require('../mongo');
 const SECRET = "QSDFGH?.?N XCFVGHJK. SVQCNVXCDFGHN";
 
 const COLLECTION = 'USERS';
 
-const getUsers = function() {
-    return new Promise(function(resolve, reject){
-        db.collection(COLLECTION).find({}).toArray(function (err, res) {
-            const users = [];
-            res.forEach((u)=>{
-                users.push({
-                    username: u.username,
-                    urlPhoto: u.urlPhoto,
-                    date: u.date
-                })
+const getUsers = function () {
+    return new Promise(function (resolve, reject) {
+        mongo.get().then(function (db) {
+            db.collection(COLLECTION).find({}).toArray(function (err, res) {
+                const users = [];
+                res.forEach((u) => {
+                    users.push({
+                        username: u.username,
+                        urlPhoto: u.urlPhoto,
+                        date: u.date
+                    })
+                });
+                resolve(users);
             });
-            resolve(users);
-        });
+        })
     });
 };
 
 const getById = function (id) {
-    return new Promise(function(resolve, reject){
+    return new Promise(function (resolve, reject) {
         var o_id = new mongo.ObjectID(id);
-        db.collection(COLLECTION).find({ _id: o_id }).toArray(function (err, res) {
-            if (!err) {
-                if (res.length == 0) {
-                    reject({
-                        status: 404,
-                        message: 'user not exist'
-                    });
+        mongo.get().then(function (db) {
+            db.collection(COLLECTION).find({ _id: o_id }).toArray(function (err, res) {
+                if (!err) {
+                    if (res.length == 0) {
+                        reject({
+                            status: 404,
+                            message: 'user not exist'
+                        });
+                    } else {
+                        resolve(res[0]);
+                    }
                 } else {
-                    resolve(res[0]);
+                    console.log("Error getUser by id:" + err);
+                    reject({
+                        status: 500,
+                        message: err
+                    });
                 }
-            } else {
-                console.log("Error getUser by id:" + err);
-                reject({
-                    status: 500,
-                    message: err
-                });
-            }
+            });
         });
     });
 };
 
 const getUser = function (username) {
     return new Promise(function (resolve, reject) {
-        db.collection(COLLECTION).find({ username: username }).toArray(function (err, res) {
-            if (!err) {
-                if (res.length == 0) {
-                    reject({
-                        status: 404,
-                        message: 'user not exist'
-                    });
+        mongo.get().then(function (db) {
+            db.collection(COLLECTION).find({ username: username }).toArray(function (err, res) {
+                if (!err) {
+                    if (res.length == 0) {
+                        reject({
+                            status: 404,
+                            message: 'user not exist'
+                        });
+                    } else {
+                        resolve(res[0]);
+                    }
                 } else {
-                    resolve(res[0]);
+                    console.log("Error getUser:" + err);
+                    reject({
+                        status: 500,
+                        message: err
+                    });
                 }
-            } else {
-                console.log("Error getUser:" + err);
-                reject({
-                    status: 500,
-                    message: err
-                });
-            }
+            });
         });
     });
 }
@@ -87,18 +93,20 @@ const signup = function (username, password, photoUrl) {
                 photoUrl: photoUrl,
                 date: new Date()
             };
-            db.collection(COLLECTION).insertOne(u, function (err, result) {
-                if (!err) {
-                    resolve({
-                        id: u._id
-                    });
-                } else {
-                    console.log("Error signup:" + err);
-                    reject({
-                        status: 500,
-                        message: err
-                    });
-                }
+            mongo.get().then(function (db) {
+                db.collection(COLLECTION).insertOne(u, function (err, result) {
+                    if (!err) {
+                        resolve({
+                            id: u._id
+                        });
+                    } else {
+                        console.log("Error signup:" + err);
+                        reject({
+                            status: 500,
+                            message: err
+                        });
+                    }
+                });
             });
         })
     });

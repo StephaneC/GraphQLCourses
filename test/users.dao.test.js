@@ -34,6 +34,7 @@ describe('Users dao', function () {
     });
 
     it(`get users `, function (done, fail) {
+        console.log("getUsers");
         users.signup("dummyAll", "dummy", "url")
             .then((user) => {
                 users.getUsers()

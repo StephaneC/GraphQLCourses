@@ -55,12 +55,14 @@ const QueryType = new GraphQLObjectType({
         users: {
             type: new GraphQLList(UserType),
             resolve() {
+                console.log("/users resolver");
                 return usersDao.getUsers()
             }
         },
         messages: {
             type: new GraphQLList(MessageType),
             resolve() {
+                console.log("/messages resolver");
                 return messagesDao.getMessages()
             }
         },
@@ -72,6 +74,7 @@ const QueryType = new GraphQLObjectType({
                 }
             },
             resolve(parent, { id }) {
+                console.log("/user:id resolver");
                 usersDao.getById(id)
             }
         }
@@ -82,4 +85,4 @@ const schema = new GraphQLSchema({
     query: QueryType
 });
 
-module.export = { schema }
+exports.default = schema;

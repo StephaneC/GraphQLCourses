@@ -8,7 +8,7 @@ const url = 'mongodb://u4okvb5zcpwmzsh:Y9QMSwyEqKDWgcPFmJ2G@blkumes3cneuqet-mong
 const dbName = 'blkumes3cneuqet';
 var client;
 
-const get = function(collection){
+const get = function(){
     return new Promise(function(resolve, reject){
         if(client && client.isConnected()){
             db = client.db(dbName);

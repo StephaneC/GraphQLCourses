@@ -35,7 +35,7 @@ const addMessage = function(message, user) {
 
 const getMessages = function() {
     return new Promise(function(resolve, reject) {
-        mongo.get().then(function(coll){
+        mongo.get().then(function(db){
             db.collection(COLLECTION).find({}).toArray(function(err, messages) {
                 if(!err){
                     resolve(messages);
